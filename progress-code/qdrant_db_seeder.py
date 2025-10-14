@@ -7,10 +7,10 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-# Base path = project root (two levels up from /work folder)
+# ----------------------
+# Environment and paths
+# ----------------------
 ENV_BASE_PATH = Path(__file__).resolve().parents[1]
-
-# Path to .env
 dotenv_path = ENV_BASE_PATH / ".env"
 load_dotenv(dotenv_path=dotenv_path)
 
@@ -23,12 +23,10 @@ if OPENAI_API_KEY is None:
 if QDRANT_URL is None:
     raise ValueError("QDRANT_URL not found in .env")
 
-ROOT_PATH = Path(__file__).parent  # folder containing the script
+ROOT_PATH = Path(__file__).parent
 JSONL_FILE = ROOT_PATH / "telerik-blazor-docs.jsonl"
-
 if not JSONL_FILE.exists():
     raise FileNotFoundError(f"JSONL file not found at {JSONL_FILE}")
-
 
 # ----------------------
 # Config
@@ -37,14 +35,12 @@ COLLECTION_NAME = "telerik_docs"
 VECTOR_MODEL = "text-embedding-3-small"
 VECTOR_SIZE = 1536
 BATCH_SIZE = 100
+MAX_CHARS = 24000  # truncate long text to avoid 8192 token limit
 
 # ----------------------
 # Initialize clients
 # ----------------------
-# OpenAI client
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
-
-# Qdrant client
 client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY, check_compatibility=False)
 
 # ----------------------
@@ -67,13 +63,17 @@ else:
 points = []
 
 with JSONL_FILE.open("r", encoding="utf-8") as f:
-    for i, line in enumerate(tqdm(f, desc="Preparing points")):
+    for idx, line in enumerate(tqdm(f, desc="Preparing points")):
         doc = json.loads(line)
 
         # Get text for embedding
         text = doc.get("text") or doc.get("articleBody") or ""
         if not text.strip():
             continue
+
+        # Truncate text to MAX_CHARS to avoid token overflow
+        if len(text) > MAX_CHARS:
+            text = text[:MAX_CHARS]
 
         # Compute OpenAI embedding
         response = openai_client.embeddings.create(
@@ -93,7 +93,8 @@ with JSONL_FILE.open("r", encoding="utf-8") as f:
             # "position": doc.get("position"),
         }
 
-        point_id = i
+        # Use 'position' if exists, otherwise auto-generate
+        point_id = idx
 
         points.append(
             rest.PointStruct(

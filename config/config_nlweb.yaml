@@ -2,7 +2,7 @@
 # This file contains settings specific to the NLWeb functionality
 
 # Comma-separated list of allowed sites, if you have multiple sites
-# in your store and want to restrict search to some sites. Defaults 
+# in your store and want to restrict search to some sites. Defaults
 # to all, for now.
 #sites: "yoursite"
 
@@ -54,9 +54,9 @@ chatbot_instructions:
   search_results: >
     IMPORTANT FORMATTING INSTRUCTION: When presenting these results to the user:
     1. For each item in the 'results' array, format the 'name' field as a hyperlink using the
-       'url' field as the link destination. For example, convert: 
-         name: 'Open Studio', url: 'https://example.com/event' 
-       to: 
+       'url' field as the link destination. For example, convert:
+         name: 'Open Studio', url: 'https://example.com/event'
+       to:
          [Open Studio](https://example.com/event)
     2. If the item has an 'image' field (which may be in the value of the schema_object field of the item), include the image in your response using markdown image syntax:
          ![Event Name](image_url)
@@ -81,4 +81,3 @@ chat:
   limits:
     max_participants: 100
     queue_size: 1000  # Messages per conversation
-  

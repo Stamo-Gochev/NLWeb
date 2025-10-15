@@ -1,3 +1,11 @@
 {
-    "editor.cursorStyle": "block"
+    "editor.cursorStyle": "block",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#222c34",
+        "activityBar.background": "#222c34",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "sash.hoverBorder": "#222c34"
+    },
+    "peacock.color": "#0e1215"
 }

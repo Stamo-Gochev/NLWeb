@@ -24,6 +24,8 @@ from data_loading.db_load_utils import (
     read_file_lines,
     prepare_documents_from_json,
     documents_from_csv_line,
+    parse_tags,
+    generate_document_id,
 )
 
 # Import vector database client directly
@@ -446,27 +448,52 @@ async def process_csv_file(file_path: str, site: str) -> List[Dict[str, Any]]:
                     if not url:
                         url = f"csv:{os.path.basename(file_path)}:{index}"
 
-                    # Convert row to JSON
-                    json_data = json.dumps(row_data)
+                    # Extract individual fields from CSV row
+                    text_content = ""
+                    description = ""
+                    headline = ""
 
-                    # Find a good name field
-                    name = None
-                    for col in ['name', 'Name', 'title', 'Title', 'heading', 'Heading']:
+                    # Find text content from common text fields
+                    for col in ['text', 'Text', 'content', 'Content', 'body', 'Body', 'description', 'Description']:
                         if col in row_data and row_data[col]:
-                            name = str(row_data[col])
+                            text_content = str(row_data[col])
                             break
 
-                    # If no name found, use a generated one
-                    if not name:
-                        name = f"Row {index} from {os.path.basename(file_path)}"
+                    # Find description
+                    for col in ['description', 'Description', 'summary', 'Summary', 'abstract', 'Abstract']:
+                        if col in row_data and row_data[col]:
+                            description = str(row_data[col])
+                            break
 
-                    # Create document
+                    # Find headline/title
+                    for col in ['headline', 'Headline', 'title', 'Title', 'heading', 'Heading', 'name', 'Name']:
+                        if col in row_data and row_data[col]:
+                            headline = str(row_data[col])
+                            break
+
+                    # Find a good name field (for display)
+                    name = headline or f"Row {index} from {os.path.basename(file_path)}"
+
+                    # Parse tags if present
+                    tags_raw = ""
+                    for col in ['tags', 'Tags', 'keywords', 'Keywords', 'categories', 'Categories']:
+                        if col in row_data and row_data[col]:
+                            tags_raw = str(row_data[col])
+                            break
+
+                    tags_list = parse_tags(tags_raw)
+
+                    # Create document with individual fields
                     document = {
-                        "id": str(hash(url) % (2**63)),  # Create a stable ID from the URL
-                        "schema_json": json_data,
+                        "id": generate_document_id(url, site, headline),
                         "url": url,
                         "name": name,
-                        "site": site
+                        "site": site,
+                        "text": text_content,
+                        "headline": headline,
+                        "description": description,
+                        "tags": tags_list,
+                        "schema_json": json.dumps(row_data)  # Keep original CSV row as fallback
                     }
 
                     documents.append(document)
@@ -533,19 +560,32 @@ async def process_rss_feed(file_path: str, site: str) -> List[Dict[str, Any]]:
                 # Skip items without any identifiable information
                 continue
 
-            # Convert to JSON - ensure no newlines in the JSON
-            json_data = json.dumps(episode, ensure_ascii=False).replace("\n", " ")
+            # Extract individual fields from episode
+            text_content = episode.get("text", "") or episode.get("description", "") or episode.get("articleBody", "")
+            headline = episode.get("name", "") or episode.get("headline", "") or episode.get("title", "")
+            description = episode.get("description", "") or episode.get("summary", "")
+            page_title = episode.get("name", "")
 
-            # Extract name
-            name = episode.get("name", "Untitled Episode")
+            # Extract tags if present
+            tags_raw = episode.get("keywords", "") or episode.get("tags", "")
 
-            # Create document
+            tags_list = parse_tags(tags_raw)
+
+            # Extract name for display
+            name = headline or "Untitled Episode"
+
+            # Create document with individual fields
             document = {
-                "id": str(hash(url) % (2**63)),  # Create a stable ID from the URL
-                "schema_json": json_data,
+                "id": generate_document_id(url, site, headline),
                 "url": url,
                 "name": name,
-                "site": site
+                "site": site,
+                "text": text_content,
+                "headline": headline,
+                "description": description,
+                "page_title": page_title,
+                "tags": tags_list,
+                "schema_json": json.dumps(episode, ensure_ascii=False).replace("\n", " ")  # Keep original as fallback
             }
 
             documents.append(document)
@@ -841,8 +881,19 @@ async def loadJsonToDB(file_path: str, site: str, batch_size: int = 100, delete_
 
             # Open file to write documents with embeddings
             with open(embeddings_path, 'w', encoding='utf-8') as embed_file:
-                # Extract texts for embedding
-                texts = [doc["schema_json"] for doc in all_documents]
+                # Extract texts for embedding from the proper text fields
+                texts = []
+                for doc in all_documents:
+                    # Use the text field for embedding, with fallback hierarchy
+                    text_for_embedding = doc.get("text", "")
+                    if not text_for_embedding:
+                        text_for_embedding = (
+                            doc.get("description", "") or
+                            doc.get("headline", "") or
+                            doc.get("page_title", "") or
+                            doc.get("schema_json", "")  # Final fallback to full JSON
+                        )
+                    texts.append(text_for_embedding)
 
                 # Process in batches
                 total_documents = 0
@@ -1119,6 +1170,7 @@ async def process_normal_path(input_file_path: str, site: str, batch_size: int =
 async def main():
     """
     Main function for command-line use.
+
 
     Example usage:
         python db_loader.py file.txt site_name

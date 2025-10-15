@@ -19,7 +19,7 @@
         <line x1="3" y1="18" x2="21" y2="18"></line>
       </svg>
     </button>
-    
+
     <!-- Sidebar Toggle Button (outside sidebar) -->
     <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -29,7 +29,7 @@
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
-      
+
       <div class="sidebar-header">
         <!-- Conversations header with new button -->
         <div class="conversations-header">
@@ -47,7 +47,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Conversations list -->
       <div class="conversations-list" id="conversations-list">
         <!-- Conversation items will be dynamically added here -->
@@ -130,8 +130,8 @@
                 <div class="mode-dropdown-item" data-mode="generate">Generate</div>
               </div>
             </div>
-            <textarea 
-              class="chat-input" 
+            <textarea
+              class="chat-input"
               id="chat-input"
               placeholder="Send a message..."
               rows="1"
@@ -195,10 +195,10 @@
         </div>
         <div class="email-login-section">
           <h3>Login with Email</h3>
-          <input 
-            type="email" 
-            id="emailLoginInput" 
-            class="email-login-input" 
+          <input
+            type="email"
+            id="emailLoginInput"
+            class="email-login-input"
             placeholder="Enter your email address"
             autocomplete="email"
           >
@@ -217,14 +217,14 @@
   <script type="module">
     import { UnifiedChatInterface } from '/static/chat-interface-unified.js';
     import { SITE_SAMPLE_QUERIES } from '/static/site-sample-queries.js';
-    
+
     // Parse ALL URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     // Extract connection mode
     const mode = urlParams.get('mode') || urlParams.get('connection');
     const connectionType = (mode === 'http' || mode === 'sse') ? 'sse' : 'websocket';
-    
+
     // Collect all additional parameters to pass to backend
     const additionalParams = {};
     for (const [key, value] of urlParams.entries()) {
@@ -233,7 +233,7 @@
         additionalParams[key] = value;
       }
     }
-    
+
     // Initialize chat interface with connection type and additional parameters
     new UnifiedChatInterface({
       connectionType: connectionType,

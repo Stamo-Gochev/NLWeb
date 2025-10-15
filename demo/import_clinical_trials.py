@@ -30,7 +30,7 @@ def main():
     if not os.path.exists(json_dir):
         logging.error(f"Directory {json_dir} does not exist. Please check the path. " + instructions)
         return
-    
+
     processed_dir = os.path.join(json_dir, "processed")
     if not os.path.exists(processed_dir):
         os.makedirs(processed_dir)
@@ -60,7 +60,7 @@ def main():
                     "content": total_data, #json.dumps(data, ensure_ascii=False),
                 }
                 #print(json.dumps(trial_info, indent=2, ensure_ascii=False))
-                
+
                 with open(os.path.join(processed_dir, filename), "w", encoding="utf-8") as f:
                     json.dump(trial_info, f)     # TODO: check if this is being formatted correctly for line by line processing on read
                     f.write("\n")

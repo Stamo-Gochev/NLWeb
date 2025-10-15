@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 @web.middleware
 async def logging_middleware(request: web.Request, handler):
     """Log all requests and responses"""
-    
+
     start_time = time.time()
-    
+
     # Extract request info
     request_info = {
         'method': request.method,
@@ -25,11 +25,11 @@ async def logging_middleware(request: web.Request, handler):
         'scheme': request.scheme,
         'host': request.host
     }
-    
+
     # Log request (exclude sensitive headers)
-    safe_headers = {k: v for k, v in request_info['headers'].items() 
+    safe_headers = {k: v for k, v in request_info['headers'].items()
                    if k.lower() not in ['authorization', 'cookie', 'x-api-key']}
-    
+
     logger.info(f"Request: {request.method} {request.path}", extra={
         'request_method': request.method,
         'request_path': request.path,
@@ -37,17 +37,17 @@ async def logging_middleware(request: web.Request, handler):
         'request_headers': safe_headers,
         'request_remote': request_info['remote']
     })
-    
+
     # Store request start time for use in handlers
     request['start_time'] = start_time
-    
+
     try:
         # Process request
         response = await handler(request)
-        
+
         # Calculate duration
         duration = time.time() - start_time
-        
+
         # Log response
         logger.info(
             f"Response: {request.method} {request.path} - {response.status} ({duration:.3f}s)",
@@ -59,12 +59,12 @@ async def logging_middleware(request: web.Request, handler):
                 'response_size': response.content_length or 0
             }
         )
-        
+
         # Add timing header
         response.headers['X-Response-Time'] = f"{duration:.3f}s"
-        
+
         return response
-        
+
     except web.HTTPException as ex:
         # Log HTTP exceptions
         duration = time.time() - start_time
@@ -79,7 +79,7 @@ async def logging_middleware(request: web.Request, handler):
             }
         )
         raise
-        
+
     except Exception as e:
         # Log other exceptions
         duration = time.time() - start_time

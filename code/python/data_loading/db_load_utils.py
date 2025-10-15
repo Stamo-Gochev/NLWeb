@@ -6,6 +6,8 @@ Includes functions for document creation, transformation, and database operation
 import os
 import json
 import asyncio
+import uuid
+import hashlib
 import numpy as np
 from typing import List, Dict, Any, Optional, Tuple, Union
 from core.config import CONFIG
@@ -33,15 +35,15 @@ EMBEDDING_SIZE = "small"
 async def read_file_lines(file_path: str) -> List[str]:
     """
     Read lines from a file, handling different encodings.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         List of lines from the file
     """
     encodings = ['utf-8', 'latin-1', 'utf-16']
-    
+
     for encoding in encodings:
         try:
             with open(file_path, 'r', encoding=encoding) as file:
@@ -51,29 +53,88 @@ async def read_file_lines(file_path: str) -> List[str]:
         except Exception as e:
             print(f"Error reading file {file_path}: {str(e)}")
             raise
-    
+
     raise ValueError(f"Could not read file {file_path} with any of the attempted encodings")
 
 def int64_hash(string):
     """
     Compute a hash value for a string, ensuring it fits within int64 range.
-    
+
     Args:
         string: The string to hash
-        
+
     Returns:
         int64 hash value
     """
     hash_value = hash(string)
     return np.int64(hash_value)
 
+def generate_document_id(url: str, site: str, headline: str = "") -> str:
+    """
+    Generate a meaningful, deterministic ID for a document.
+
+    Uses a combination of UUID namespace and content hash to create
+    a reproducible but meaningful identifier.
+
+    Args:
+        url: Document URL
+        site: Site identifier
+        headline: Document headline/title (optional)
+
+    Returns:
+        String ID that's meaningful and deterministic
+    """
+    # Create a deterministic seed from URL and site
+    seed_content = f"{site}:{url}:{headline}".lower().strip()
+
+    # Use UUID5 (deterministic, namespace-based) for consistency
+    # This ensures the same content always gets the same ID
+    namespace = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')  # Standard namespace UUID
+    doc_uuid = uuid.uuid5(namespace, seed_content)
+
+    # Create a shorter, more readable ID with site prefix
+    short_hash = hashlib.md5(seed_content.encode()).hexdigest()[:8]
+    meaningful_id = f"{site.lower()}-{short_hash}-{str(doc_uuid)[:8]}"
+
+    return meaningful_id
+
+def parse_tags(tags_string: str) -> List[str]:
+    """
+    Parse a comma-separated tags string into a list of individual tags.
+
+    Args:
+        tags_string: Comma-separated string of tags
+
+    Returns:
+        List of individual tag strings, cleaned and normalized
+    """
+    if not tags_string or not isinstance(tags_string, str):
+        return []
+
+    # Split by comma and clean each tag
+    tags = [
+        tag.strip().lower()  # Remove whitespace and normalize to lowercase
+        for tag in tags_string.split(',')
+        if tag.strip()  # Only include non-empty tags
+    ]
+
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_tags = []
+    for tag in tags:
+        if tag not in seen:
+            seen.add(tag)
+            unique_tags.append(tag)
+
+    return unique_tags
+
 def should_include_item(js):
     """
     Check if an item should be included based on its type.
-    
+
     Args:
         js: JSON object to check
-        
+
     Returns:
         True if the item should be included, False otherwise
     """
@@ -93,10 +154,10 @@ def should_include_item(js):
 def normalize_item_list(js):
     """
     Normalize a JSON item list into a consistent format.
-    
+
     Args:
         js: JSON object or list to normalize
-        
+
     Returns:
         Normalized list of items
     """
@@ -119,10 +180,10 @@ def normalize_item_list(js):
 def get_item_name(item: Dict[str, Any]) -> str:
     """
     Extract name from a JSON item using various fields.
-    
+
     Args:
         item: JSON item to extract name from
-        
+
     Returns:
         Name string or empty string if no name found
     """
@@ -131,24 +192,24 @@ def get_item_name(item: Dict[str, Any]) -> str:
             name = get_item_name(subitem)
             if name:
                 return name
-    
+
     name_fields = ["name", "headline", "title", "keywords"]
-    
+
     for field in name_fields:
         if field in item and item[field]:
             return item[field]
-    
+
     # Try to extract from URL if name fields aren't present
     url = None
     if "url" in item:
         url = item["url"]
     elif "@id" in item:
         url = item["@id"]
-    
+
     if url:
         # Just return the URL as the name
         return url
-    
+
     # If no URL found either, return a default name
     return "Unnamed Item"
 
@@ -157,12 +218,12 @@ def get_item_name(item: Dict[str, Any]) -> str:
 def prepare_documents_from_json(url: str, json_data: str, site: str) -> Tuple[List[Dict[str, Any]], List[str]]:
     """
     Prepare documents from URL and JSON data.
-    
+
     Args:
         url: URL for the item
         json_data: JSON data for the item
         site: Site identifier
-        
+
     Returns:
         Tuple of (documents, texts_for_embedding)
     """
@@ -170,37 +231,71 @@ def prepare_documents_from_json(url: str, json_data: str, site: str) -> Tuple[Li
         # Parse and trim the JSON
         json_obj = json.loads(json_data)
         trimmed_json = trim_schema_json(json_obj, site)
-        
+
         if not trimmed_json:
             return [], []
-        
+
         # Convert to list if not already
         if not isinstance(trimmed_json, list):
             trimmed_json = [trimmed_json]
-        
+
         documents = []
         texts = []
-        
+
         # Process each item in the JSON
         for i, item in enumerate(trimmed_json):
             if item is None:
                 continue
-                
+
             item_url = url if i == 0 else f"{url}#{i}"
-            item_json = json.dumps(item)
-            
-            # Add document to batch
+
+            # Extract individual fields from the JSON item
+            text_content = item.get("text", "")
+            article_body = item.get("articleBody", "")
+            headline = item.get("headline", "")
+            description = item.get("description", "")
+            page_title = item.get("page_title", "")
+            tags_raw = item.get("tags", "")
+            published = item.get("published", None)
+            position = item.get("position", None)
+
+            # Parse tags from comma-separated string to list
+            tags_list = parse_tags(tags_raw)
+
+            # Create document with individual fields instead of storing entire JSON
             doc = {
-                "id": str(int64_hash(item_url)),
-                "schema_json": item_json,
+                "id": generate_document_id(item_url, site, headline),
                 "url": item_url,
                 "name": get_item_name(item),
-                "site": site
+                "site": site,
+                "text": text_content,
+                "article_body": article_body,
+                "headline": headline,
+                "description": description,
+                "page_title": page_title,
+                "tags": tags_list,  # Now stored as a list of individual tags
+                "published": published,
+                # "position": position,
+                # Keep the full JSON as a fallback for any other fields
+                "schema_json": json.dumps(item)
             }
-            
+
             documents.append(doc)
-            texts.append(item_json)
-        
+
+            # Use the text field for embedding (primary content)
+            text_for_embedding = text_content
+            if not text_for_embedding:
+                # Fallback hierarchy for embedding text
+                text_for_embedding = (
+                    article_body or
+                    description or
+                    headline or
+                    page_title
+                    # json.dumps(item)  # Final fallback to full JSON
+                )
+
+            texts.append(text_for_embedding)
+
         return documents, texts
     except Exception as e:
         print(f"Error preparing documents from JSON: {str(e)}")
@@ -209,51 +304,52 @@ def prepare_documents_from_json(url: str, json_data: str, site: str) -> Tuple[Li
 def documents_from_csv_line(line, site):
     """
     Parse a line with URL, JSON, and embedding into document objects.
-    
+
     Args:
         line: Tab-separated line with URL, JSON, and embedding
         site: Site identifier
-        
+
     Returns:
         List of document objects
     """
     try:
         url, json_data, embedding_str = line.strip().split('\t')
-        embedding_str = embedding_str.replace("[", "").replace("]", "") 
+        embedding_str = embedding_str.replace("[", "").replace("]", "")
         embedding = [float(x) for x in embedding_str.split(',')]
         js = json.loads(json_data)
         js = trim_schema_json(js, site)
     except Exception as e:
         print(f"Error processing line: {str(e)}")
         return []
-    
+
     # Skip if trim_schema_json returned None
     if js is None:
         return []
-    
+
     documents = []
     if not isinstance(js, list):
         js = [js]
-    
+
     for i, item in enumerate(js):
         # Skip None items in the list
         if item is None:
             continue
-            
+
         # No longer filtering by should_include_item - trimming already handles this
         item_url = url if i == 0 else f"{url}#{i}"
         name = get_item_name(item)
-        
+        headline = item.get("headline", "") or item.get("title", "") or ""
+
         # Ensure no None values in the document
         doc = {
-            "id": str(int64_hash(item_url)),
+            "id": generate_document_id(item_url, site or "unknown", headline),
             "embedding": embedding,
             "schema_json": json.dumps(item),
             "url": item_url or "",
             "name": name or "Unnamed Item",
             "site": site or "unknown"
         }
-        
+
         # Additional validation to ensure no None values
         for key, value in doc.items():
             if value is None:
@@ -262,9 +358,9 @@ def documents_from_csv_line(line, site):
                     doc[key] = []
                 else:
                     doc[key] = ""
-        
+
         documents.append(doc)
-    
+
     return documents
 
 # ---------- Database Client Functions ----------
@@ -276,19 +372,19 @@ async def get_vector_client(endpoint_name=None):
     Get a client for the specified retrieval endpoint from config.
     This is a backward compatibility wrapper.
     For new code, import get_vector_db_client directly from retriever.py.
-    
+
     Args:
         endpoint_name: Name of the endpoint to use (if None, uses preferred endpoint)
-        
+
     Returns:
         Tuple of (client, db_type) for backward compatibility
     """
     # Dynamically import to avoid circular imports
     from core.retriever import get_vector_db_client
-    
+
     # Get the client
     client = get_vector_db_client(endpoint_name)
-    
+
     # Return both the client and the db_type for backward compatibility
     return client, client.db_type
 
@@ -298,7 +394,7 @@ async def upload_batch_to_db(client, db_type, documents, batch_idx, total_batche
     Upload a batch of documents to the database using the client.
     This is a backward compatibility wrapper.
     For new code, use client.upload_documents() directly.
-    
+
     Args:
         client: VectorDBClient instance
         db_type: Type of database (no longer used, kept for backward compatibility)
@@ -309,15 +405,15 @@ async def upload_batch_to_db(client, db_type, documents, batch_idx, total_batche
     """
     if not documents:
         return
-    
+
     try:
         print(f"Uploading batch {batch_idx+1} of {total_batches} ({len(documents)} documents)")
-        
+
         # Use the client's upload_documents method (db_type is ignored)
         uploaded_count = await client.upload_documents(documents)
-            
+
         print(f"Successfully uploaded batch {batch_idx+1} ({uploaded_count} documents)")
-    
+
     except Exception as e:
         print(f"Error uploading batch {batch_idx+1}: {str(e)}")
         import traceback
@@ -328,35 +424,35 @@ async def upload_batch_to_db(client, db_type, documents, batch_idx, total_batche
 def resolve_file_path(file_path: str, with_embeddings: bool = False) -> str:
     """
     Resolve a file path, using config defaults for relative paths.
-    
+
     Args:
         file_path: Original file path
         with_embeddings: Whether the file contains embeddings
-        
+
     Returns:
         Resolved file path
     """
     # If path is absolute, return it as is
     if os.path.isabs(file_path):
         return file_path
-    
+
     # If the file exists at the provided path, use it as is
     if os.path.exists(file_path):
         return os.path.abspath(file_path)
-    
+
     # For relative paths, use the config
     if hasattr(CONFIG, 'nlweb'):
         if with_embeddings:
             base_folder = CONFIG.nlweb.json_with_embeddings_folder
         else:
             base_folder = CONFIG.nlweb.json_data_folder
-            
+
         # Create the directory if it doesn't exist
         os.makedirs(base_folder, exist_ok=True)
-        
+
         # Join the base folder with the provided file path
         # Make sure we're using the basename to avoid path duplication
         return os.path.join(base_folder, os.path.basename(file_path))
-    
+
     # If config doesn't have nlweb settings, return the original path
     return file_path

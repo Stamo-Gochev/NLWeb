@@ -477,6 +477,7 @@ class VectorDBClient:
             logger.debug(f"  api_endpoint: {bool(config.api_endpoint)} ({config.api_endpoint if config.api_endpoint else 'None'})")
             return bool(config.api_key and config.api_endpoint)
         elif db_type == "qdrant":
+
             # Qdrant can use either local path or remote URL
             if config.database_path:
                 return True  # Local file-based storage

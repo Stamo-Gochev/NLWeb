@@ -28,10 +28,10 @@ def setup_api_routes(app: web.Application):
 
 async def ask_handler(request: web.Request) -> web.Response:
     """Handle /ask endpoint for generating answers"""
-    
+
     # Get query parameters
     query_params = dict(request.query)
-    
+
     # For POST requests, merge body parameters
     if request.method == 'POST':
         try:
@@ -43,12 +43,12 @@ async def ask_handler(request: web.Request) -> web.Response:
                 query_params.update(dict(body_data))
         except Exception as e:
             logger.warning(f"Failed to parse POST body: {e}")
-    
+
     # Check if SSE streaming is requested
     is_sse = request.get('is_sse', False)
     streaming = get_param(query_params, "streaming", str, "True")
     streaming = streaming not in ["False", "false", "0"]
-    
+
     if is_sse or streaming:
         return await handle_streaming_ask(request, query_params)
     else:
@@ -57,7 +57,7 @@ async def ask_handler(request: web.Request) -> web.Response:
 
 async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any]) -> web.StreamResponse:
     """Handle streaming (SSE) ask requests"""
-    
+
     # Create SSE response
     response = web.StreamResponse(
         status=200,
@@ -68,17 +68,17 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
             'X-Accel-Buffering': 'no'
         }
     )
-    
+
     await response.prepare(request)
-    
+
     # Create aiohttp-compatible wrapper
     wrapper = AioHttpStreamingWrapper(request, response, query_params)
     await wrapper.prepare_response()
-    
+
     try:
         # Determine which handler to use based on generate_mode
         generate_mode = query_params.get('generate_mode', 'none')
-        
+
         if generate_mode == 'generate':
             handler = GenerateAnswer(query_params, wrapper)
             await handler.runQuery()
@@ -89,35 +89,35 @@ async def handle_streaming_ask(request: web.Request, query_params: Dict[str, Any
             await handler.runQuery()
 
         # Handler already sends end-nlweb-response, no need for additional complete message
-        
+
     except Exception as e:
         logger.error(f"Error in streaming ask handler: {e}", exc_info=True)
         await wrapper.send_error_response(500, str(e))
     finally:
         await wrapper.finish_response()
-    
+
     return response
 
 
 async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any]) -> web.Response:
     """Handle non-streaming ask requests"""
-    
+
     try:
         # Determine which handler to use
         generate_mode = query_params.get('generate_mode', 'none')
-        
+
         if generate_mode == 'generate':
             handler = GenerateAnswer(query_params, None)
         else:
             from core.baseHandler import NLWebHandler
             handler = NLWebHandler(query_params, None)
-        
+
         # Run the query - it will return the complete response
         result = await handler.runQuery()
-        
+
         # Return the response directly
         return web.json_response(result)
-        
+
     except Exception as e:
         logger.error(f"Error in regular ask handler: {e}", exc_info=True)
         return web.json_response({
@@ -128,16 +128,16 @@ async def handle_regular_ask(request: web.Request, query_params: Dict[str, Any])
 
 async def who_handler(request: web.Request) -> web.Response:
     """Handle /who endpoint with optional streaming support"""
-    
+
     try:
         # Get query parameters
         query_params = dict(request.query)
-        
+
         # Check if SSE streaming is requested
         is_sse = request.get('is_sse', False)
         streaming = get_param(query_params, "streaming", str, "False")
         streaming = streaming not in ["False", "false", "0"]
-        
+
         if is_sse or streaming:
             # Handle streaming response
             response = web.StreamResponse(
@@ -149,33 +149,33 @@ async def who_handler(request: web.Request) -> web.Response:
                     'X-Accel-Buffering': 'no'
                 }
             )
-            
+
             await response.prepare(request)
-            
+
             # Create aiohttp-compatible wrapper
             wrapper = AioHttpStreamingWrapper(request, response, query_params)
             await wrapper.prepare_response()
-            
+
             try:
                 # Run the who handler with streaming
                 handler = WhoHandler(query_params, wrapper)
                 await handler.runQuery()
 
                 # Handler already sends end-nlweb-response, no need for additional complete message
-                
+
             except Exception as e:
                 logger.error(f"Error in streaming who handler: {e}", exc_info=True)
                 await wrapper.send_error_response(500, str(e))
             finally:
                 await wrapper.finish_response()
-            
+
             return response
         else:
             # Handle non-streaming response
             handler = WhoHandler(query_params, None)
             result = await handler.runQuery()
             return web.json_response(result)
-        
+
     except Exception as e:
         logger.error(f"Error in who handler: {e}", exc_info=True)
         return web.json_response({

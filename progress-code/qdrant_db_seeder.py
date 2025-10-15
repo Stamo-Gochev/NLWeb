@@ -31,7 +31,7 @@ if not JSONL_FILE.exists():
 # ----------------------
 # Config
 # ----------------------
-COLLECTION_NAME = "telerik_docs"
+COLLECTION_NAME = os.getenv("OPENAI_API_KEY")
 VECTOR_MODEL = "text-embedding-3-small"
 VECTOR_SIZE = 1536
 BATCH_SIZE = 100
@@ -86,10 +86,11 @@ with JSONL_FILE.open("r", encoding="utf-8") as f:
         payload = {
             "headline": doc.get("headline"),
             "url": doc.get("url"),
-            "tags": doc.get("tags"),
+            "tags": doc.get("tags").split(","),
             "description": doc.get("description"),
             "page_title": doc.get("page_title"),
             "published": doc.get("published"),
+            # "site": "https://www.telerik.com/blazor-ui/documentation"
             # "position": doc.get("position"),
         }
 

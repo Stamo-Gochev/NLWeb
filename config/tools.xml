@@ -18,10 +18,10 @@
         - Finding recipes/movies/books/products that match certain requirements
         - Discovering items based on attributes like genre, cuisine type, price range, or features
         - Broad exploration when users want to see what's available
-        
-        The search tool is NOT the best choice if the user is asking for specific details 
+
+        The search tool is NOT the best choice if the user is asking for specific details
         about a PARTICULAR named item (like ingredients, instructions, cast, price, etc.).
-        
+
         Assign a score from 0 to 100 for whether the search tool is appropriate.
         Also provide the search query that should be passed to the tool.
       </prompt>
@@ -38,22 +38,22 @@
       <handler>methods.item_details.ItemDetailsHandler</handler>
       <example>What are the ingredients in Chicken Alfredo?</example>
       <example>Who directed The Dark Knight?</example>
-     
+
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The details tool gets specific information about a PARTICULAR named item and is best for:
         - Getting ingredients, instructions, or other details about a SPECIFIC recipe/item
         - Getting the price, specifications, color, etc. for a specific product
         - Queries that mention a specific item name and ask for particular details about it.
-        
+
         The details tool should score HIGH (80-100) if the user names a specific item and wants details.
         The details tool should score LOW (0-30) if the user wants to find/search for items.
 
-        If you are not sure whether the user is asking for details about a specific item, 
+        If you are not sure whether the user is asking for details about a specific item,
         or if they are asking for a general search, assume that they are doing a search
         and score the tool as LOW. Details queries should specify what details are being requested.
-        
+
         Assign a score from 0 to 100 for whether the details tool is appropriate.
         If the user is asking for details about a specific item, provide the item name and what details are being requested.
       </prompt>
@@ -75,12 +75,12 @@
       <example>Which has better ratings: Olive Garden vs Carrabba's?</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The compare tool compares two items side by side and is best for:
         - Direct comparisons between two specific named items
         - Questions asking "which is better" or "what's the difference"
         - Evaluating items against each other on specific criteria
-        
+
         Assign a score from 0 to 100 for whether the compare tool is appropriate.
 
         If the score is above 74, provide the names of the two items being compared in the item1_name and item2_name fields.
@@ -99,7 +99,7 @@
   </Item>
 
   <Recipe>
-  
+
 
     <Tool name="details" enabled="true">
       <method>code</method>
@@ -110,7 +110,7 @@
       <example>What's the calorie content of Thai Green Curry?</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The recipe details tool gets detailed information about a specific recipe including nutritional content, ingredients list, cooking instructions, prep time, and serving size. It's best for:
         - Getting ingredients for a SPECIFIC named recipe
         - Getting cooking instructions for a particular recipe
@@ -119,11 +119,11 @@
 
         Queries that don't mention a very specific recipe should be scored LOW (0-30). Queries
         that don't specify what kind of details about the recipe should be scored low.
-        
-        The details tool should score HIGH (80-100) if the user names a specific recipe and wants specific 
+
+        The details tool should score HIGH (80-100) if the user names a specific recipe and wants specific
         details like the ingredients or cooking time or nutrition.
         The details tool should score LOW (0-30) if the user wants to find/search for recipes.
-        
+
         Assign a score from 0 to 100 for whether the recipe details tool is appropriate.
         If the user is asking for details about a specific recipe, provide the recipe name and what details are being requested.
       </prompt>
@@ -145,12 +145,12 @@
       <example>Which is healthier: caesar salad or greek salad?</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The recipe compare tool compares two recipes side by side for nutritional content, ingredients, cooking time, difficulty, or cost. It's best for:
         - Direct comparisons between two specific named recipes
         - Questions asking "which is healthier" or "which has more protein"
         - Evaluating recipes against each other on specific criteria
-        
+
         Assign a score from 0 to 100 for whether the recipe compare tool is appropriate.
         If appropriate, identify the two recipes being compared.
       </prompt>
@@ -172,18 +172,18 @@
       <example>I don't have buttermilk, what can I use instead?</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The recipe substitutions tool suggests ingredient substitutions for recipes to accommodate dietary restrictions, allergies, or ingredient availability. It's best for:
         - Making recipes dairy-free, gluten-free, vegan, etc.
         - Finding alternatives when ingredients are unavailable
         - Adapting recipes for allergies or dietary restrictions
         - Questions about ingredient replacements
-        
+
         Assign a score from 0 to 100 for whether the recipe substitutions tool is appropriate.
         If appropriate, identify the recipe, dietary need, or ingredient substitution being requested.
         Only fill out the fields that are explicitly mentioned in the user's query.
-        
-        IMPORTANT: If the user mentions a specific food item or recipe (e.g., "chocolate chip cookies", "chocolate cake", "pasta"), 
+
+        IMPORTANT: If the user mentions a specific food item or recipe (e.g., "chocolate chip cookies", "chocolate cake", "pasta"),
         include it in the recipe_name field even if they don't explicitly say "recipe".
       </prompt>
       <returnStruc>
@@ -206,23 +206,23 @@
       <example>what side dishes go well with roast turkey</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The accompaniment tool finds items that complement or pair well with a main item. It is best for:
         - Finding wines that pair with specific dishes
         - Suggesting side dishes or salads for main courses
         - Recommending sauces or condiments that balance flavors
         - Finding complementary items where one enhances the other
-        
+
         This tool should score HIGH (80-100) when the user:
         - Asks what goes well with a specific dish
         - Wants pairing recommendations (wine, sides, sauces)
         - Needs something to complement or balance another item
-        
+
         This tool should score LOW (0-30) when the user:
         - Just wants a recipe for something
         - Is looking for ingredient substitutions
         - Wants nutritional information
-        
+
         Assign a score from 0 to 100 for whether this tool is appropriate.
         If the score is above 74, provide:
         - search_query: the type of accompaniment (e.g., "salad", "sauce", "wine")
@@ -248,20 +248,20 @@
       <example>Plan a romantic date night with dinner, activity, and dessert</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The ensemble tool handles requests where users ask for multiple related items that go together as a set or collection. It's designed for:
         - Meal planning (appetizer + main + dessert combinations)
         - Travel itineraries (attractions + restaurants + activities in a location)
         - Outfit recommendations (clothing + accessories for specific occasions/weather)
         - Event planning (venue + catering + entertainment)
         - Any request asking for multiple complementary items
-        
+
         The ensemble tool should score HIGH (80-100) if the user wants multiple related items that form a cohesive set.
-        The ensemble tool should score LOW (0-30) if the user wants just one specific item type (e.g, spices for 
+        The ensemble tool should score LOW (0-30) if the user wants just one specific item type (e.g, spices for
         a particular recipe, or a specific type of clothing for a specific occasion).
-        
+
         Assign a score from 0 to 100 for whether the ensemble tool is appropriate.
-        
+
         If the score is above 74, extract the individual queries that should be searched for.
         For example:
         - "Asian fusion dinner" → ["Asian fusion appetizer", "Asian fusion main course", "Asian fusion dessert"]
@@ -279,7 +279,7 @@
   </Item>
 
   <Statistics>
-   
+
     <Tool name="statistics_query" enabled="true">
       <method>code</method>
       <handler>methods.statistics_handler.StatisticsHandler</handler>
@@ -291,7 +291,7 @@
       <example>Which counties have median income above $100,000?</example>
       <prompt>
         The user has the following query: {request.query}.
-        
+
         The statistics query tool retrieves and analyzes statistical data about places (counties, cities, states) from Data Commons. It can handle:
         - Single variable queries for a specific place (e.g., "What is the median income in X county?", "population of Y city")
         - Comparisons between places for a variable (e.g., "compare population between county A and B")
@@ -301,27 +301,27 @@
         - Statistical aggregations (e.g., "average X across all counties")
         - Trend analysis (e.g., "how has X changed from year1 to year2")
         - Ratio and percentage calculations (e.g., "ratio of X to Y")
-        
-        Common variables include: population, median age, median income, number of homes, 
+
+        Common variables include: population, median age, median income, number of homes,
         number of veterans, number of disabled, unemployment rate, poverty rate, education level,
         and other demographic/economic indicators.
-        
+
         The tool should score VERY HIGH (95-100) when the user asks:
         - "What is the [variable] in [place]?" (e.g., "What is the median income in San Francisco county?")
         - "Population of [place]" or "[variable] of [place]"
         - Any question about demographic or economic data for geographic locations
-        
+
         The tool should score HIGH (80-94) when the user asks about:
         - Comparisons between places
         - Rankings or extremes based on variables
         - Correlations or relationships between variables
         - Statistical aggregations or distributions
-        
+
         The tool should score LOW (0-30) when:
         - The query is not about statistical/demographic data
         - The query is about non-place entities (people, products, etc.)
         - The query asks for general details about a place without mentioning specific statistics
-        
+
         Assign a score from 0 to 100 for whether this tool is appropriate.
         If the score is above 74, extract the key components of the query.
       </prompt>
@@ -338,7 +338,7 @@
         }
       </returnStruc>
     </Tool>
-    
+
   </Statistics>
   </Site>
 
@@ -354,13 +354,13 @@
         <example>Compare hotel prices in Paris across all booking sites</example>
         <prompt>
           The user has the following query: {request.query}.
-          
+
           When the site is 'all', we search across multiple websites to find the best aggregated results.
           This is ideal for queries that benefit from comparing information from multiple sources.
-          
+
           Since this is the 'all' site context, the search tool should almost always be selected
           unless the query is asking for something very specific that doesn't make sense for multi-site search.
-          
+
           Assign a score from 0 to 100 for whether searching across all sites is appropriate.
         </prompt>
         <returnStruc>
@@ -371,7 +371,7 @@
         </returnStruc>
       </Tool>
   </Item>
-     
+
   </Site>
 
   <!-- Special site for searching conversation history -->
@@ -385,10 +385,10 @@
         <example>Show me my conversations about Italian food</example>
         <prompt>
           The user has the following query: {request.query}.
-          
+
           This tool searches through the user's conversation history. Since the site is "conv_history",
           ALL queries should use this tool to search the conversation history.
-          
+
           Always score 100 for this tool when site=conv_history.
 
         </prompt>
@@ -415,10 +415,10 @@
         <example>What is Joe Root's test batting average?</example>
         <prompt>
           The user has the following query: {request.query}.
-          
+
           This tool retrieves cricket statistics, match scores, player records, and tournament information.
           Since the site is "CricketLens", ALL queries should use this tool to get cricket information.
-          
+
           The cricket stats tool handles:
           - Live match scores and updates
           - Player statistics and records
@@ -426,7 +426,7 @@
           - Tournament information and results
           - Historical cricket data
           - Match schedules and fixtures
-          
+
           Always score 100 for this tool when site=CricketLens.
         </prompt>
         <returnStruc>
@@ -438,7 +438,7 @@
       </Tool>
     </Item>
   </Site>
-  
+
   <!-- Aliases for CricketLens to handle different domain formats -->
   <Site id="cricketlens">
     <Item>
@@ -456,7 +456,7 @@
       </Tool>
     </Item>
   </Site>
-  
+
   <Site id="cricketlens.com">
     <Item>
       <Tool name="cricket_stats" enabled="true">

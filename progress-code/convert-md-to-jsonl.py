@@ -8,8 +8,9 @@ from pathlib import Path
 
 # === CONFIG ===
 INPUT_DIR = Path("D:/work/github/blazor-docs")
-OUTPUT_FILE = "./telerik-blazor-docs.jsonl"
-BASE_URL = "https://www.telerik.com/blazor-ui/documentation/"
+OUTPUT_FILE = "./progress-code/telerik-blazor-docs.jsonl"
+# BASE_URL = "https://www.telerik.com/blazor-ui/documentation/components"
+BASE_URL = "https://www.telerik.com/blazor-ui/documentation"
 
 # === HELPERS ===
 
@@ -55,7 +56,38 @@ def convert_markdown_file(file_path):
     html_content = markdown.markdown(md_content)
     filename = os.path.basename(file_path)
     title = metadata.get("title") or filename.replace(".md", "")
-    url = f"{BASE_URL}/{metadata.get('slug', filename.replace('.md', ''))}"
+    slug = metadata.get('slug')
+    res_type = metadata.get("res_type")
+
+    # # Check if required fields exist
+    # if not slug:
+    #     print(f"Warning: No slug found in {file_path}, using filename as fallback")
+    #     slug = filename.replace(".md", "").lower().replace(" ", "-")
+    # else:
+    #     slug = slug.lower().replace("-", "/")
+
+    # if not res_type:
+    #     # print(f"Warning: No res_type found in {file_path}, defaulting to 'component'")
+    #     res_type = "component"
+
+    if not slug:
+        print(f"Warning: No slug found in {file_path}, using filename as fallback")
+        url = f"{BASE_URL}/components/no-slug"
+    else:
+        if res_type == "kb":
+            if "chart" in slug:
+                slug = slug.replace("", "")
+            else:
+                slug = slug.lower().replace("-", "/").replace("components/", "")
+
+            url = f"{BASE_URL}/knowledge-base/{slug}"
+        else:
+            if "chart" in slug:
+                slug = slug.replace("", "")
+            else:
+                slug = slug.lower().replace("-", "/").replace("components/", "")
+
+            url = f"{BASE_URL}/components/{slug}"
 
     doc = {
         "@context": "https://schema.org",

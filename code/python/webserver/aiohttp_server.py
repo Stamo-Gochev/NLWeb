@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 class AioHTTPServer:
     """Main aiohttp server implementation for NLWeb"""
-    
+
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
             config_path = "config/config_webserver.yaml"
@@ -39,29 +39,29 @@ class AioHTTPServer:
         self.runner: Optional[web.AppRunner] = None
         self.site: Optional[web.TCPSite] = None
         self.record_file: Optional[str] = None
-        
+
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load configuration from YAML file"""
         base_path = Path(__file__).parent.parent.parent.parent
         config_file = base_path / config_path
-        
+
         if not config_file.exists():
             logger.warning(f"Config file not found at {config_file}, using defaults")
             return self._get_default_config()
-            
+
         with open(config_file, 'r') as f:
             config = yaml.safe_load(f)
-            
+
         # Override with environment variables
         config['port'] = int(os.environ.get('PORT', config.get('port', 8000)))
-        
+
         # Azure App Service specific
         if os.environ.get('WEBSITE_SITE_NAME'):
             config['server']['host'] = '0.0.0.0'
             logger.info("Running in Azure App Service mode")
-            
+
         return config
-    
+
     def _get_default_config(self) -> Dict[str, Any]:
         """Get default configuration"""
         return {
@@ -80,96 +80,96 @@ class AioHTTPServer:
                 }
             }
         }
-    
+
     def _setup_ssl_context(self) -> Optional[ssl.SSLContext]:
         """Setup SSL context if enabled"""
         ssl_config = self.config.get('server', {}).get('ssl', {})
-        
+
         if not ssl_config.get('enabled', False):
             return None
-            
+
         cert_file = os.environ.get(ssl_config.get('cert_file_env', 'SSL_CERT_FILE'))
         key_file = os.environ.get(ssl_config.get('key_file_env', 'SSL_KEY_FILE'))
-        
+
         if not cert_file or not key_file:
             logger.warning("SSL enabled but certificate files not found")
             return None
-            
+
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         ssl_context.load_cert_chain(cert_file, key_file)
-        
+
         # Configure for modern TLS
         ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
         ssl_context.set_ciphers('ECDHE+AESGCM:ECDHE+CHACHA20:DHE+AESGCM:DHE+CHACHA20:!aNULL:!MD5:!DSS')
-        
+
         return ssl_context
-    
+
     async def create_app(self) -> web.Application:
         """Create and configure the aiohttp application"""
         # Create application with proper settings
         app = web.Application(
             client_max_size=1024**2 * 10,  # 10MB max request size
         )
-        
+
         # Store config in app for access in handlers
         app['config'] = self.config
-        
+
         # Setup middleware
         from .middleware import setup_middleware
         setup_middleware(app)
-        
+
         # Setup routes
         from .routes import setup_routes
         setup_routes(app)
-        
+
         # Setup startup and cleanup handlers
         app.on_startup.append(self._on_startup)
         app.on_cleanup.append(self._on_cleanup)
         app.on_shutdown.append(self._on_shutdown)
-        
+
         # Setup client session for outgoing requests
         app['client_session'] = None
-        
+
         return app
-    
+
     async def _on_startup(self, app: web.Application):
         """Initialize resources on startup"""
         import aiohttp
-        
+
         # Create shared client session
         timeout = aiohttp.ClientTimeout(total=30)
         app['client_session'] = aiohttp.ClientSession(timeout=timeout)
-        
+
         # Initialize chat system components
         await self._initialize_chat_system(app)
-        
+
         logger.info(f"Server starting on {self.config['server']['host']}:{self.config['port']}")
         logger.info(f"Mode: {self.config['mode']}")
         logger.info(f"CORS enabled: {self.config['server']['enable_cors']}")
-    
+
     async def _on_cleanup(self, app: web.Application):
         """Cleanup resources"""
         if app['client_session']:
             await app['client_session'].close()
-    
+
     async def _on_shutdown(self, app: web.Application):
         """Graceful shutdown"""
         logger.info("Server shutting down gracefully...")
-        
+
         # Shutdown chat system
         if 'conversation_manager' in app:
             await app['conversation_manager'].shutdown()
-    
+
     async def _initialize_chat_system(self, app: web.Application):
         """Initialize chat system components"""
         try:
             from chat.websocket import WebSocketManager
             from chat.conversation import ConversationManager
             from chat.storage import SimpleChatStorageClient
-            
+
             # Initialize WebSocket manager
             app['websocket_manager'] = WebSocketManager(max_connections_per_participant=1)
-            
+
             # Initialize conversation manager
             chat_config = self.config.get('chat', {})
             conv_manager_config = {
@@ -179,13 +179,13 @@ class AioHTTPServer:
                 'max_participants': chat_config.get('max_participants', 100)
             }
             app['conversation_manager'] = ConversationManager(conv_manager_config)
-            
+
             # Note: Storage is handled through conversation_history API directly
             # No need to initialize a separate storage client
-            
+
             # Store websocket manager in conversation manager
             app['conversation_manager'].websocket_manager = app['websocket_manager']
-            
+
             # Set up WebSocket broadcast callback
             def broadcast_to_conversation(conversation_id: str, message: dict):
                 """Broadcast message to all participants in a conversation"""
@@ -193,36 +193,36 @@ class AioHTTPServer:
                 asyncio.create_task(
                     ws_manager.broadcast_to_conversation(conversation_id, message)
                 )
-            
+
             app['conversation_manager'].broadcast_callback = broadcast_to_conversation
-            
+
             # Set up WebSocket manager callbacks
             ws_manager = app['websocket_manager']
             conv_manager = app['conversation_manager']
-            
+
             # Participant verification callback
             async def verify_participant(conversation_id: str, participant_id: str) -> bool:
                 """With simple storage, allow all participants"""
                 # In simple storage mode, we don't track participants
                 # Just allow the connection
                 return True
-            
+
             ws_manager.verify_participant_callback = verify_participant
-            
+
             # Get participants callback
             async def get_participants(conversation_id: str) -> Dict[str, Any]:
                 """Get current participants for a conversation"""
                 # With simple storage, get participants from ConversationManager
                 if conversation_id not in conv_manager._conversations:
                     return {"participants": [], "count": 0}
-                
+
                 conv_state = conv_manager._conversations[conversation_id]
-                
+
                 # Check online status
                 online_ids = set()
                 if conversation_id in ws_manager._connections:
                     online_ids = set(ws_manager._connections[conversation_id].keys())
-                
+
                 # Build participant list from conversation state
                 participants = []
                 for participant_id, participant in conv_state.participants.items():
@@ -235,14 +235,14 @@ class AioHTTPServer:
                         "joinedAt": datetime.utcfromtimestamp(p_info.joined_at / 1000).isoformat() + 'Z' if p_info.joined_at else datetime.utcnow().isoformat() + 'Z',
                         "isOnline": p_info.participant_id in online_ids
                     })
-                
+
                 return {
                     "participants": participants,
                     "count": len(participants)
                 }
-            
+
             ws_manager.get_participants_callback = get_participants
-            
+
             # Set up NLWeb handler class for chat system
             try:
                 from core.baseHandler import NLWebHandler
@@ -251,20 +251,20 @@ class AioHTTPServer:
             except ImportError as e:
                 logger.error(f"Failed to import NLWebHandler: {e}")
                 app['nlweb_handler'] = None
-            
+
             logger.info("Chat system initialized successfully")
-            
+
         except Exception as e:
             logger.error(f"Failed to initialize chat system: {e}", exc_info=True)
             # Chat is optional, so we don't fail the server startup
-    
+
     async def start(self):
         """Start the server"""
         # Check if port is already in use
         import socket
         port = self.config['port']
         host = self.config['server']['host']
-        
+
         # Try to bind to the port to check if it's available
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -294,24 +294,24 @@ class AioHTTPServer:
         finally:
             # Always close the socket
             sock.close()
-        
+
         self.app = await self.create_app()
-        
+
         # Create runner
         self.runner = web.AppRunner(
             self.app,
             keepalive_timeout=75,  # Match aiohttp default
             access_log_format='%a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"'
         )
-        
+
         await self.runner.setup()
-        
+
         # Check platform support for reuse_port
         reuse_port_supported = sys.platform not in ['win32', 'cygwin']
-        
+
         # Setup SSL
         ssl_context = self._setup_ssl_context()
-        
+
         # Create site
         self.site = web.TCPSite(
             self.runner,
@@ -322,18 +322,18 @@ class AioHTTPServer:
             reuse_address=True,
             reuse_port=reuse_port_supported    # Reuse port is not supported by default on Windows and will cause issues
         )
-        
+
         await self.site.start()
-        
+
         protocol = "https" if ssl_context else "http"
         logger.info(f"Server started at {protocol}://{self.config['server']['host']}:{self.config['port']}")
-        
+
         # Keep server running
         try:
             await asyncio.Event().wait()
         except KeyboardInterrupt:
             logger.info("Received interrupt signal")
-    
+
     async def stop(self):
         """Stop the server gracefully"""
         if self.site:

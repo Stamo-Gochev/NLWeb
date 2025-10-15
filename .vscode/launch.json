@@ -4,13 +4,37 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "Python Debugger: Current File",
-            "type": "debugpy",
+            "name": "Python Debugger: app-file.py",
+            "type": "python",
             "request": "launch",
-            "program": "${file}",
+            // "program": "${workspaceFolder}/code/python/app-file.py",
+            "program": "${workspaceFolder}/code/python/app-file.py",
             "console": "integratedTerminal"
-        }
+        },
+
+        // {
+        //     "name": "Debug DB Load Command",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}\\code\\python\\data_loading\\db_load.py",
+        //     "args": [
+        //         ".\\progress-code\\telerik-blazor-docs.jsonl",
+        //         "BlazorDocs"
+        //     ],
+        //     "console": "integratedTerminal"
+        // }
+
+        // {
+        //     "name": "Run DB Load in Git Bash",
+        //     "type": "bashdb",
+        //     "request": "launch",
+        //     "program": "C:\\Program Files\\Git\\bin\\bash.exe",
+        //     "args": [
+        //         "-c",
+        //         "python -m code.python.data_loading.db_load ../../progress-code/telerik-blazor-docs.jsonl BlazorDocs"
+        //     ],
+        //     "console": "integratedTerminal"
+        // }
     ]
 }

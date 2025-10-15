@@ -1,4 +1,4 @@
-write_endpoint: qdrant_url
+write_endpoint: qdrant_local
 
 endpoints:
 
@@ -120,6 +120,7 @@ endpoints:
     # index_name: nlweb_collection
     # index_name: COLLECTION_NAME
     index_name: telerik_docs
+    # index_name: telerik_blogs
     # Specify the database type
     db_type: qdrant
 

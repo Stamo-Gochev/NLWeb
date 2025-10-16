@@ -44,12 +44,12 @@ COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Expose the port the app runs on
-EXPOSE 8000
+EXPOSE 8123
 
 # Set environment variables
 ENV NLWEB_OUTPUT_DIR=/app
 ENV PYTHONPATH=/app
-ENV PORT=8000
+ENV PORT=8123
 ENV NLWEB_CONFIG_DIR=/app/config
 
 # Command to run the application

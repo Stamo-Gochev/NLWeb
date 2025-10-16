@@ -7,7 +7,7 @@ import json
 import requests
 
 # Test server URL
-url = "http://localhost:8000/mcp"
+url = "http://localhost:8123/mcp"
 
 # Test 1: Initialize
 print("Test 1: Initialize")

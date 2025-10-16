@@ -83,6 +83,6 @@ These instructions assume that you have Python 3.10+ installed locally.
     python app-file.py
     ```
 
-9. Go to http://localhost:8000/
+9. Go to http://localhost:8123/
 
 10. You should have a working search!  You can also try different sample UIs by adding 'static/\<html file name>' to your localhost path above.

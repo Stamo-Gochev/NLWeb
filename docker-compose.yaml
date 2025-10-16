@@ -5,18 +5,18 @@ services:
       dockerfile: Dockerfile
     container_name: nlweb
     ports:
-      - "8000:8000"
+      - "8123:8123"
     env_file:
       - .env
     environment:
       - PYTHONPATH=/app
-      - PORT=8000
+      - PORT=8123
       - NLWEB_CONFIG_DIR=/app/config
     volumes:
       - ./data:/app/data
       - ./config:/app/config:ro
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000')\""]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8123')\""]
       interval: 30s
       timeout: 10s
       retries: 3

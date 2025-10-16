@@ -151,17 +151,17 @@ To test the new server:
 2. Test endpoints:
    ```bash
    # Health check
-   curl http://localhost:8000/health
-   
+   curl http://localhost:8123/health
+
    # Static files
-   curl http://localhost:8000/
-   
+   curl http://localhost:8123/
+
    # API endpoints
-   curl http://localhost:8000/who
-   curl http://localhost:8000/sites
-   
+   curl http://localhost:8123/who
+   curl http://localhost:8123/sites
+
    # SSE streaming
-   curl -H "Accept: text/event-stream" http://localhost:8000/ask?q=test
+   curl -H "Accept: text/event-stream" http://localhost:8123/ask?q=test
    ```
 
 ## Configuration

@@ -17,7 +17,7 @@ prompt_with_default() {
     local prompt_text="$1"
     local default_value="$2"
     local var_name="$3"
-    
+
     if [ -n "$default_value" ]; then
         read -p "$prompt_text [$default_value]: " user_input
         if [ -z "$user_input" ]; then
@@ -37,8 +37,8 @@ echo "1. Go to: https://github.com/settings/developers"
 echo "2. Click 'OAuth Apps' then 'New OAuth App'"
 echo "3. Use these settings:"
 echo "   - Application name: NLWeb Local"
-echo "   - Homepage URL: http://localhost:8000"
-echo "   - Authorization callback URL: http://localhost:8000/oauth/callback"
+echo "   - Homepage URL: http://localhost:8123"
+echo "   - Authorization callback URL: http://localhost:8123/oauth/callback"
 echo ""
 
 # Prompt for GitHub credentials

@@ -1,4 +1,4 @@
-port: 8000
+port: 8123
 static_directory: ../static
 
 # the system can be run in development, production, or testing mode.
@@ -20,18 +20,18 @@ server:
   enable_cors: true
   max_connections: 100
   timeout: 30  # seconds
-  
+
   # SSL configuration (optional)
   ssl:
     enabled: false
     cert_file_env: SSL_CERT_FILE
     key_file_env: SSL_KEY_FILE
-    
+
   # Logging configuration
   logging:
     level: info
     file: ./logs/webserver.log
-    
+
   # Static file serving
   static:
     enable_cache: true

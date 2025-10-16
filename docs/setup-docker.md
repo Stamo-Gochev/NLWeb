@@ -50,10 +50,10 @@ Note: The `--push` flag is required for multi-architecture builds. If you want t
 To run the Docker container:
 
 ```bash
-docker run -p 8000:8000 -v ./config:/app/config:ro -v ./data:/data nlweb:latest
+docker run -p 8123:8123 -v ./config:/app/config:ro -v ./data:/data nlweb:latest
 ```
 
-This will start the NLWeb application and expose it on port 8000.
+This will start the NLWeb application and expose it on port 8123.
 
 ## Configuration
 
@@ -69,7 +69,7 @@ The application requires several environment variables to be set. There are two 
    AZURE_VECTOR_SEARCH_ENDPOINT=https://your-search.search.windows.net
    AZURE_VECTOR_SEARCH_API_KEY=your-api-key
    OPENAI_API_KEY=your-openai-key
-docker run -it -p 8000:8000 \
+docker run -it -p 8123:8123 \
   -v ./data:/data \
   -v ./code/config:/app/code/config:ro \
   -e AZURE_VECTOR_SEARCH_ENDPOINT=${AZURE_VECTOR_SEARCH_ENDPOINT} \
@@ -171,7 +171,7 @@ docker exec -it <container_id> python -m data_loading.db_load https://feeds.libs
 Once the container is running, you can access the application at:
 
 ```
-http://localhost:8000
+http://localhost:8123
 ```
 
 ## Additional Information

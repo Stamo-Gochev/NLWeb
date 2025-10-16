@@ -14,7 +14,7 @@ The aiohttp server migration has been completed with the following components:
 
 2. **Middleware System**
    - CORS handling
-   - Error handling  
+   - Error handling
    - Request/response logging
    - Authentication
    - Streaming support (fixed for FileResponse compatibility)
@@ -56,17 +56,17 @@ After restarting the server with the fixes, test with:
 
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8123/health
 
 # Static file (should work after restart)
-curl http://localhost:8000/
+curl http://localhost:8123/
 
 # API endpoints
-curl http://localhost:8000/sites
-curl http://localhost:8000/who
+curl http://localhost:8123/sites
+curl http://localhost:8123/who
 
 # SSE streaming
-curl -H "Accept: text/event-stream" "http://localhost:8000/sites?streaming=true"
+curl -H "Accept: text/event-stream" "http://localhost:8123/sites?streaming=true"
 ```
 
 ### ⚠️ Important Notes:
@@ -78,7 +78,7 @@ curl -H "Accept: text/event-stream" "http://localhost:8000/sites?streaming=true"
 ### 📝 Next Steps:
 
 1. Add OAuth routes implementation
-2. Add MCP routes implementation  
+2. Add MCP routes implementation
 3. Add conversation management routes
 4. Performance optimization
 5. Production deployment configuration

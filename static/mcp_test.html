@@ -250,7 +250,7 @@
 </head>
 <body>
     <h1>MCP Test Interface</h1>
-    
+
     <div class="tab-container">
         <div class="tab-buttons">
             <button class="tab-button active" onclick="switchTab('standard-tab')">Standard Request</button>
@@ -258,41 +258,41 @@
             <button class="tab-button" onclick="switchTab('examples-tab')">Examples</button>
             <button class="tab-button" onclick="switchTab('about-tab')">About</button>
         </div>
-        
+
         <div id="standard-tab" class="tab-content active">
             <div class="container">
                 <div class="panel left-panel">
                     <h2>MCP Request</h2>
                     <div class="form-group">
                         <label for="serverUrl">Server URL:</label>
-                        <input type="text" id="serverUrl" value="http://localhost:8000/mcp" placeholder="http://localhost:8000/mcp">
+                        <input type="text" id="serverUrl" value="http://localhost:8123/mcp" placeholder="http://localhost:8123/mcp">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="query">Query:</label>
                         <textarea id="query" placeholder="Enter your question here">Robot movies for kids</textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="site">Site (optional):</label>
                         <input type="text" id="site" placeholder="">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="prevQuery">Previous Query (optional):</label>
                         <input type="text" id="prevQuery" placeholder="Previous question for context">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="contextUrl">Context URL (optional):</label>
                         <input type="text" id="contextUrl" placeholder="URL providing additional context">
                     </div>
-                    
+
                     <button onclick="sendStandardRequest()">Send Request</button>
                 </div>
-                
+
                 <div class="splitter" id="standard-splitter"></div>
-                
+
                 <div class="panel right-panel">
                     <h2>Response</h2>
                     <div class="view-mode-selector">
@@ -305,41 +305,41 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="streaming-tab" class="tab-content">
             <div class="container">
                 <div class="panel left-panel">
                     <h2>Streaming MCP Request</h2>
                     <div class="form-group">
                         <label for="streamingServerUrl">Server URL:</label>
-                        <input type="text" id="streamingServerUrl" value="http://localhost:8000/mcp" placeholder="http://localhost:8000/mcp">
+                        <input type="text" id="streamingServerUrl" value="http://localhost:8123/mcp" placeholder="http://localhost:8123/mcp">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="streamingQuery">Query:</label>
                         <textarea id="streamingQuery" placeholder="Enter your question here">Movies that present AI in a positive light</textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="streamingSite">Site (optional):</label>
                         <input type="text" id="streamingSite" placeholder="scifi_movies">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="streamingPrevQuery">Previous Query (optional):</label>
                         <input type="text" id="streamingPrevQuery" placeholder="Previous question for context">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="streamingContextUrl">Context URL (optional):</label>
                         <input type="text" id="streamingContextUrl" placeholder="URL providing additional context">
                     </div>
-                    
+
                     <button onclick="sendStreamingRequest()">Start Streaming</button>
                 </div>
-                
+
                 <div class="splitter" id="streaming-splitter"></div>
-                
+
                 <div class="panel right-panel">
                     <h2>Streaming Response</h2>
                     <div class="view-mode-selector">
@@ -352,13 +352,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="examples-tab" class="tab-content">
             <div class="container">
                 <div class="panel left-panel">
                     <h2>Example Queries</h2>
                     <p>Click on an example to load it into the form:</p>
-                    
+
                     <h3>Non-streaming Queries</h3>
                     <ul class="examples-list">
                         <li onclick="loadStandardExample('Who was the director of Blade Runner', 'scifi_movies')">
@@ -370,7 +370,7 @@
                         <li onclick="loadStandardExample('Movies that show friendship between robots and children', 'scifi_movies')">
                             Movies that show friendship between robots and children</li>
                     </ul>
-                    
+
                     <h3>Streaming Queries</h3>
                     <ul class="examples-list">
                         <li onclick="loadStreamingExample('Movies that have been inspired by Star Trek', 'scifi_movies')">Streaming: Movies that have been inspired by Star Trek</li>
@@ -378,13 +378,13 @@
                         <li onclick="loadStreamingExample('I mean in movies other than the Star Trek movies', 'scifi_movies', '[Characters like Spock and Data, Movies that have been inspired by Star Trek]')">Streaming: I mean in movies other than the Star Trek movies</li>
                     </ul>
                 </div>
-                
+
                 <div class="splitter" id="examples-splitter"></div>
-                
+
                 <div class="panel right-panel">
                     <h2>Example MCP Requests</h2>
                     <p>These are the actual JSON payloads that will be sent to the server:</p>
-                    
+
                     <div class="view-mode-selector">
                         <button class="active" onclick="switchViewMode('example-json-tree', 'example-payload', this)">Tree View</button>
                         <button onclick="switchViewMode('example-payload', 'example-json-tree', this)">Raw JSON</button>
@@ -396,13 +396,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="about-tab" class="tab-content">
             <div class="container">
                 <div class="panel left-panel">
                     <h2>About NLWeb and MCP</h2>
                     <p>NLWeb aims to bring AI-powered conversational search to a broad range of
-                        content sources, especially websites. NLWeb is designed to give agency into all players in the AI ecosystem, 
+                        content sources, especially websites. NLWeb is designed to give agency into all players in the AI ecosystem,
                         especially content creators. A more balanced ecosystem is one where content creators
                         have greater control over their content.
                     </p>
@@ -411,19 +411,19 @@
                         <code>ask</code>, which is used to ask a website a question in natural language. The returned response
                         is in schema.org, a widely-used vocabulary for describing web data.
                     </p>
-                    
-                    <p>This test interface allows you to experiment with MCP requests to your NLWeb server, 
+
+                    <p>This test interface allows you to experiment with MCP requests to your NLWeb server,
                         testing both standard and streaming responses.</p>
-                    
+
                     <h3>Request Format</h3>
                     <p>An MCP request includes:</p>
                     <ul>
                         <li><strong>function_call</strong>: The function to invoke</li>
                         <li><strong>name</strong>: ask</li>
-                        <li><strong>arguments</strong>: JSON string with parameters. All parameters except 'query' and 'site' are optional. Site may be 'all' to search all the 
+                        <li><strong>arguments</strong>: JSON string with parameters. All parameters except 'query' and 'site' are optional. Site may be 'all' to search all the
                             sites in this NLWeb instance.</li>
                     </ul>
-                    
+
                     <h3>Response Format</h3>
                     <p>Standard responses include:</p>
                     <ul>
@@ -431,7 +431,7 @@
                         <li><strong>status</strong>: "success" or "error"</li>
                         <li><strong>response</strong>: The answer from the NLWeb instance, in schema.org format</li>
                     </ul>
-                    
+
                     <p>Streaming responses include:</p>
                     <ul>
                         <li><strong>type</strong>: "function_stream_event" for chunks, "function_stream_end" for completion</li>
@@ -439,11 +439,11 @@
                         <li><strong>status</strong>: Final status in the end event</li>
                     </ul>
                 </div>
-                
+
                 <div class="splitter" id="about-splitter"></div>
-                
+
                 <div class="panel right-panel">
-                   
+
                     <p>This test interface provides:</p>
                     <ul>
                         <li><strong>JSON Tree Viewer</strong>: Interactive expandable/collapsible tree view for JSON responses</li>
@@ -453,14 +453,14 @@
                         <li><strong>Examples</strong>: Pre-configured examples for quick testing</li>
                         <li><strong>Visual Feedback</strong>: See response content and status in real-time</li>
                     </ul>
-                    
+
                     <h3>Tips</h3>
                     <ul>
                         <li>Switch between Tree View and Raw JSON/Text modes using the buttons above the response area</li>
                         <li>Click on the toggles (+ / -) in the tree view to expand or collapse JSON nodes</li>
                         <li>For local testing, ensure CORS is properly configured on your server</li>
                         <li>The streaming tab formats partial responses as they arrive</li>
-                        
+
                     </ul>
                 </div>
             </div>
@@ -475,29 +475,29 @@
             initSplitter('examples-splitter');
             initSplitter('about-splitter');
         });
-        
+
         // Initialize a splitter
         function initSplitter(splitterId) {
             const splitter = document.getElementById(splitterId);
             if (!splitter) return;
-            
+
             const container = splitter.parentElement;
             const leftPanel = splitter.previousElementSibling;
             const rightPanel = splitter.nextElementSibling;
-            
+
             let isResizing = false;
             let startX, startLeftWidth;
-            
+
             // Mouse events for desktop
             splitter.addEventListener('mousedown', startResize);
             document.addEventListener('mousemove', resize);
             document.addEventListener('mouseup', stopResize);
-            
+
             // Touch events for mobile
             splitter.addEventListener('touchstart', startResizeTouch);
             document.addEventListener('touchmove', resizeTouch);
             document.addEventListener('touchend', stopResize);
-            
+
             function startResize(e) {
                 e.preventDefault();
                 isResizing = true;
@@ -505,7 +505,7 @@
                 startLeftWidth = leftPanel.getBoundingClientRect().width;
                 splitter.classList.add('active');
             }
-            
+
             function startResizeTouch(e) {
                 if (e.touches.length === 1) {
                     isResizing = true;
@@ -514,81 +514,81 @@
                     splitter.classList.add('active');
                 }
             }
-            
+
             function resize(e) {
                 if (!isResizing) return;
-                
+
                 const containerWidth = container.getBoundingClientRect().width;
                 const splitterWidth = splitter.getBoundingClientRect().width;
-                
+
                 let newLeftWidth = startLeftWidth + e.clientX - startX;
-                
+
                 // Min/max constraints
                 const minWidth = 200;
                 const maxWidth = containerWidth - minWidth - splitterWidth;
-                
+
                 newLeftWidth = Math.max(minWidth, Math.min(newLeftWidth, maxWidth));
-                
+
                 const leftPercent = (newLeftWidth / containerWidth) * 100;
                 const rightPercent = 100 - leftPercent - (splitterWidth / containerWidth) * 100;
-                
+
                 leftPanel.style.flex = `0 0 ${leftPercent}%`;
                 rightPanel.style.flex = `0 0 ${rightPercent}%`;
             }
-            
+
             function resizeTouch(e) {
                 if (!isResizing || e.touches.length !== 1) return;
-                
+
                 const containerWidth = container.getBoundingClientRect().width;
                 const splitterWidth = splitter.getBoundingClientRect().width;
-                
+
                 let newLeftWidth = startLeftWidth + e.touches[0].clientX - startX;
-                
+
                 // Min/max constraints
                 const minWidth = 200;
                 const maxWidth = containerWidth - minWidth - splitterWidth;
-                
+
                 newLeftWidth = Math.max(minWidth, Math.min(newLeftWidth, maxWidth));
-                
+
                 const leftPercent = (newLeftWidth / containerWidth) * 100;
                 const rightPercent = 100 - leftPercent - (splitterWidth / containerWidth) * 100;
-                
+
                 leftPanel.style.flex = `0 0 ${leftPercent}%`;
                 rightPanel.style.flex = `0 0 ${rightPercent}%`;
             }
-            
+
             function stopResize() {
                 isResizing = false;
                 splitter.classList.remove('active');
             }
         }
-        
+
         // Switch between view modes (tree view and raw JSON)
         function switchViewMode(showId, hideId, button) {
             const showElement = document.getElementById(showId);
             const hideElement = document.getElementById(hideId);
-            
+
             if (showElement && hideElement) {
                 showElement.style.display = '';
                 hideElement.style.display = 'none';
-                
+
                 // Update button styles
                 const buttons = button.parentElement.querySelectorAll('button');
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
             }
         }
-        
+
         // Generate a unique query ID
         function generateQueryId() {
             return 'query_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
-        
+
         // JSON Tree Viewer
         function renderJsonTree(json, elementId) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            
+
             try {
                 let jsonObj;
                 if (typeof json === 'string') {
@@ -598,74 +598,74 @@
                     // Use the object directly
                     jsonObj = json;
                 }
-                
+
                 // Clear previous content
                 element.innerHTML = '';
-                
+
                 // Create and append the root element
                 const tree = document.createElement('ul');
                 element.appendChild(tree);
-                
+
                 // Render the root object
                 renderObject(jsonObj, tree);
-                
+
                 // Add click handlers to toggles
                 addToggleHandlers(element);
-                
+
             } catch (e) {
                 console.error('Error rendering JSON tree:', e);
                 element.innerHTML = `<div style="color: red;">Error rendering JSON: ${e.message}</div>`;
             }
         }
-        
+
         function renderObject(obj, parentElement) {
             for (const key in obj) {
                 if (Object.prototype.hasOwnProperty.call(obj, key)) {
                     const value = obj[key];
                     const li = document.createElement('li');
-                    
+
                     if (isObject(value)) {
                         // Object or Array - add toggle
                         const toggle = document.createElement('span');
                         toggle.className = 'json-toggle expanded';
                         li.appendChild(toggle);
-                        
+
                         // Add key
                         const keySpan = document.createElement('span');
                         keySpan.className = 'json-key';
                         keySpan.textContent = `${key}: `;
                         li.appendChild(keySpan);
-                        
+
                         // Add open bracket/brace
                         const openMark = document.createElement('span');
                         openMark.className = 'json-mark';
                         openMark.textContent = Array.isArray(value) ? '[' : '{';
                         li.appendChild(openMark);
-                        
+
                         // Create children container
                         const children = document.createElement('ul');
                         children.className = 'json-children';
                         li.appendChild(children);
-                        
+
                         // Recursively render child elements
                         renderObject(value, children);
-                        
+
                         // Add close bracket/brace
                         const closeMark = document.createElement('span');
                         closeMark.className = 'json-mark';
                         closeMark.textContent = Array.isArray(value) ? ']' : '}';
                         li.appendChild(closeMark);
-                        
+
                     } else {
                         // Primitive value
                         const keySpan = document.createElement('span');
                         keySpan.className = 'json-key';
                         keySpan.textContent = `${key}: `;
                         li.appendChild(keySpan);
-                        
+
                         // Format value based on type
                         const valueSpan = document.createElement('span');
-                        
+
                         if (value === null) {
                             valueSpan.className = 'json-null';
                             valueSpan.textContent = 'null';
@@ -681,19 +681,19 @@
                         } else {
                             valueSpan.textContent = value;
                         }
-                        
+
                         li.appendChild(valueSpan);
                     }
-                    
+
                     parentElement.appendChild(li);
                 }
             }
         }
-        
+
         function isObject(value) {
             return value !== null && typeof value === 'object';
         }
-        
+
         function addToggleHandlers(element) {
             const toggles = element.querySelectorAll('.json-toggle');
             toggles.forEach(toggle => {
@@ -701,7 +701,7 @@
                     // Toggle the expanded/collapsed state
                     this.classList.toggle('expanded');
                     this.classList.toggle('collapsed');
-                    
+
                     // Find and toggle the children container
                     const children = this.parentNode.querySelector('.json-children');
                     if (children) {
@@ -710,24 +710,24 @@
                 });
             });
         }
-        
+
         // Tab switching
         function switchTab(tabId) {
             // Hide all tabs
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
-            
+
             // Deactivate all buttons
             const buttons = document.querySelectorAll('.tab-button');
             buttons.forEach(button => button.classList.remove('active'));
-            
+
             // Activate the selected tab
             document.getElementById(tabId).classList.add('active');
-            
+
             // Activate the clicked button
             event.target.classList.add('active');
         }
-        
+
         // Standard request
         async function sendStandardRequest() {
             const serverUrl = document.getElementById('serverUrl').value;
@@ -735,22 +735,22 @@
             const site = document.getElementById('site').value;
             const prevQuery = document.getElementById('prevQuery').value;
             const contextUrl = document.getElementById('contextUrl').value;
-            
+
             const responseEl = document.getElementById('standard-response');
             const statusEl = document.getElementById('standard-status');
-            
+
             // Generate a unique query ID
             const queryId = generateQueryId();
-            
+
             // Build arguments object
-            const args = { 
+            const args = {
                 query,
                 query_id: queryId
             };
             if (site) args.site = site;
             if (prevQuery) args.prev_query = prevQuery;
             if (contextUrl) args.context_url = contextUrl;
-            
+
             // Build MCP request payload
             const payload = {
                 jsonrpc: "2.0",
@@ -761,12 +761,12 @@
                     arguments: args
                 }
             };
-            
+
             try {
                 statusEl.textContent = "Initializing MCP server...";
                 responseEl.textContent = "";
                 document.getElementById('standard-json-tree').innerHTML = "";
-                
+
                 // Step 1: Initialize
                 await fetch(serverUrl, {
                     method: 'POST',
@@ -782,7 +782,7 @@
                         }
                     })
                 });
-                
+
                 // Step 2: Send initialized notification
                 try {
                     await fetch(serverUrl, {
@@ -797,9 +797,9 @@
                 } catch (e) {
                     // Notifications return empty response, this is expected
                 }
-                
+
                 statusEl.textContent = `Sending request with ID: ${queryId}...`;
-                
+
                 const response = await fetch(serverUrl, {
                     method: 'POST',
                     headers: {
@@ -807,21 +807,21 @@
                     },
                     body: JSON.stringify(payload)
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
                 responseEl.textContent = JSON.stringify(data, null, 2);
-                
+
                 // Render the JSON tree view
                 renderJsonTree(data, 'standard-json-tree');
-                
+
                 statusEl.textContent = `Request ${queryId} completed successfully: ${new Date().toLocaleTimeString()}`;
             } catch (error) {
                 responseEl.textContent = `Error: ${error.message}`;
-                
+
                 // Fix: Create elements safely instead of using innerHTML
                 const errorDiv = document.createElement('div');
                 errorDiv.style.color = 'red';
@@ -829,12 +829,12 @@
                 const treeElement = document.getElementById('standard-json-tree');
                 treeElement.innerHTML = ''; // Clear existing content
                 treeElement.appendChild(errorDiv);
-                
+
                 statusEl.textContent = `Request ${queryId} failed: ${new Date().toLocaleTimeString()}`;
                 console.error("Error:", error);
             }
         }
-        
+
         // Streaming request
         async function sendStreamingRequest() {
             const serverUrl = document.getElementById('streamingServerUrl').value;
@@ -842,20 +842,20 @@
             const site = document.getElementById('streamingSite').value;
             const prevQuery = document.getElementById('streamingPrevQuery').value;
             const contextUrl = document.getElementById('streamingContextUrl').value;
-            
+
             const responseEl = document.getElementById('streaming-response');
             const jsonTreeEl = document.getElementById('streaming-json-tree');
             const statusEl = document.getElementById('streaming-status');
-            
+
             // Build arguments object
-            const args = { 
+            const args = {
                 query,
-                streaming: true 
+                streaming: true
             };
             if (site) args.site = site;
             if (prevQuery) args.prev_query = prevQuery;
             if (contextUrl) args.context_url = contextUrl;
-            
+
             // Build MCP request payload
             const payload = {
                 jsonrpc: "2.0",
@@ -866,12 +866,12 @@
                     arguments: args
                 }
             };
-            
+
             try {
                 statusEl.textContent = "Initializing MCP server...";
                 responseEl.textContent = "";
                 jsonTreeEl.innerHTML = "";
-                
+
                 // Step 1: Initialize
                 await fetch(serverUrl, {
                     method: 'POST',
@@ -887,7 +887,7 @@
                         }
                     })
                 });
-                
+
                 // Step 2: Send initialized notification
                 try {
                     await fetch(serverUrl, {
@@ -902,17 +902,17 @@
                 } catch (e) {
                     // Notifications return empty response, this is expected
                 }
-                
+
                 statusEl.textContent = "Starting stream...";
-                
+
                 // For tracking complete response for JSON tree view
                 let completeResponse = "";
                 let finalJsonObj = null;
-                
+
                 // Add streaming parameter to URL
                 const streamUrl = new URL(serverUrl);
                 streamUrl.searchParams.append('streaming', 'true');
-                
+
                 const response = await fetch(streamUrl.toString(), {
                     method: 'POST',
                     headers: {
@@ -921,45 +921,45 @@
                     },
                     body: JSON.stringify(payload)
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                
+
                 // Check if response is JSON-RPC instead of SSE
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     // Handle as JSON-RPC response (like standard request)
                     const data = await response.json();
-                    
+
                     // Extract text content from MCP response
                     if (data.result && data.result.content && data.result.content[0] && data.result.content[0].text) {
                         const textContent = data.result.content[0].text;
                         responseEl.textContent = textContent;
                         completeResponse = textContent;
-                        
+
                         // Update JSON tree with the full response
                         renderJsonTree(data, 'streaming-json-tree');
                     } else {
                         responseEl.textContent = JSON.stringify(data, null, 2);
                         renderJsonTree(data, 'streaming-json-tree');
                     }
-                    
+
                     statusEl.textContent = `Stream completed (JSON response): ${new Date().toLocaleTimeString()}`;
                     return; // Exit early since this is not SSE
                 }
-                
+
                 // Process the event stream
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
-                
+
                 while (true) {
                     const { done, value } = await reader.read();
-                    
+
                     if (done) {
                         statusEl.textContent = `Stream ended: ${new Date().toLocaleTimeString()}`;
-                        
+
                         // Try to parse and render the final JSON if we have complete response
                         if (completeResponse) {
                             try {
@@ -975,37 +975,37 @@
                         }
                         break;
                     }
-                    
+
                     // Decode and add to buffer
                     buffer += decoder.decode(value, { stream: true });
-                    
+
                     // Process complete events in buffer
                     const lines = buffer.split('\n\n');
                     buffer = lines.pop() || ''; // Keep the last incomplete chunk in buffer
-                    
+
                     for (const line of lines) {
                         if (!line || line.startsWith(':')) continue; // Skip comments or empty lines
-                        
+
                         if (line.startsWith('data: ')) {
                             try {
                                 const eventData = JSON.parse(line.substring(6)); // Skip 'data: '
-                                
+
                                 if (eventData.type === 'function_stream_event') {
                                     // Process partial response
                                     const content = eventData.content || {};
                                     if (content.partial_response) {
                                         // Add to the complete response for JSON tree view later
                                         completeResponse += content.partial_response;
-                                        
+
                                         // Update raw text view with streaming indicator
                                         responseEl.textContent += content.partial_response;
-                                        
+
                                         // Auto-scroll to bottom
                                         responseEl.scrollTop = responseEl.scrollHeight;
-                                        
+
                                         // Update status to show streaming progress
                                         statusEl.textContent = `Streaming... (${completeResponse.length} chars received)`;
-                                        
+
                                         // Update JSON tree with current state
                                         const currentJsonObj = {
                                             type: "streaming_in_progress",
@@ -1024,7 +1024,7 @@
                                     if (eventData.error) {
                                         statusEl.textContent = `❌ Stream failed: ${eventData.error} at ${new Date().toLocaleTimeString()}`;
                                     }
-                                    
+
                                     // Update final JSON view
                                     finalJsonObj = {
                                         type: "stream_completed",
@@ -1034,11 +1034,11 @@
                                         final_response: completeResponse,
                                         completed_at: new Date().toISOString()
                                     };
-                                    
+
                                     if (eventData.error) {
                                         finalJsonObj.error = eventData.error;
                                     }
-                                    
+
                                     renderJsonTree(finalJsonObj, 'streaming-json-tree');
                                 }
                             } catch (e) {
@@ -1054,64 +1054,64 @@
                 console.error("Streaming error:", error);
             }
         }
-        
+
         // Load example into standard form
         function loadStandardExample(query, site = '', prevQuery = '', contextUrl = '') {
             document.getElementById('query').value = query;
             document.getElementById('site').value = site;
             document.getElementById('prevQuery').value = prevQuery;
             document.getElementById('contextUrl').value = contextUrl;
-            
+
             // Show example payload
             const args = { query };
             if (site) args.site = site;
             if (prevQuery) args.prev_query = prevQuery;
             if (contextUrl) args.context_url = contextUrl;
-            
+
             const payload = {
                 function_call: {
                     name: "ask",
                     arguments: JSON.stringify(args)
                 }
             };
-            
+
             document.getElementById('example-payload').textContent = JSON.stringify(payload, null, 2);
-            
+
             // Also render the JSON tree view
             renderJsonTree(payload, 'example-json-tree');
-            
+
             // Switch to standard tab
             switchTab('standard-tab');
         }
-        
+
         // Load example into streaming form
         function loadStreamingExample(query, site = '', prevQuery = '', contextUrl = '') {
             document.getElementById('streamingQuery').value = query;
             document.getElementById('streamingSite').value = site;
             document.getElementById('streamingPrevQuery').value = prevQuery;
             document.getElementById('streamingContextUrl').value = contextUrl;
-            
+
             // Show example payload
-            const args = { 
+            const args = {
                 query,
-                streaming: true 
+                streaming: true
             };
             if (site) args.site = site;
             if (prevQuery) args.prev_query = prevQuery;
             if (contextUrl) args.context_url = contextUrl;
-            
+
             const payload = {
                 function_call: {
                     name: "ask",
                     arguments: JSON.stringify(args)
                 }
             };
-            
+
             document.getElementById('example-payload').textContent = JSON.stringify(payload, null, 2);
-            
+
             // Also render the JSON tree view
             renderJsonTree(payload, 'example-json-tree');
-            
+
             // Switch to streaming tab
             switchTab('streaming-tab');
         }

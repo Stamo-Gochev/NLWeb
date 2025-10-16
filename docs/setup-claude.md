@@ -33,7 +33,7 @@ Assumes you have [Claude for Desktop](https://claude.ai/download). This works on
       "args": [
         "/Users/yourname/NLWeb/code/python/chatbot_interface.py",
         "--server",
-        "http://localhost:8000",
+        "http://localhost:8123",
         "--endpoint",
         "/mcp"
       ],
@@ -53,7 +53,7 @@ Assumes you have [Claude for Desktop](https://claude.ai/download). This works on
       "args": [
         "C:\\Users\\yourusername\\NLWeb\\code\\python\\chatbot_interface.py",
         "--server",
-        "http://localhost:8000",
+        "http://localhost:8123",
         "--endpoint",
         "/mcp"
       ],

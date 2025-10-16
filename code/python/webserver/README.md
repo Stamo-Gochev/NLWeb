@@ -83,7 +83,7 @@ python -m webserver.aiohttp_server
 The server respects various environment variables:
 
 - `HOST`: Server bind address (default: 0.0.0.0)
-- `PORT`: Server port (default: 8000)
+- `PORT`: Server port (default: 8123)
 - `USE_AIOHTTP`: Whether to use aiohttp server (default: true)
 
 ## Migration Status

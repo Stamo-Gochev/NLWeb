@@ -5,7 +5,7 @@
       "args": [
         "/Users/guha/NLWeb/code/chatbot_interface.py",
         "--server",
-        "http://localhost:8000",
+        "http://localhost:8123",
         "--endpoint",
         "/mcp"
       ],

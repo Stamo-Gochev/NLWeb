@@ -65,7 +65,7 @@ Before setting up OAuth, ensure you have:
    - Click "Create Credentials" → "OAuth client ID"
    - Choose "Web application"
    - Add authorized redirect URIs:
-     - `http://localhost:8000/oauth/callback` (for local development)
+     - `http://localhost:8123/oauth/callback` (for local development)
      - `https://yourdomain.com/oauth/callback` (for production)
 
 4. **Save Your Credentials**
@@ -85,7 +85,7 @@ Before setting up OAuth, ensure you have:
 3. **Configure Facebook Login**
    - Add "Facebook Login" product
    - In settings, add Valid OAuth Redirect URIs:
-     - `http://localhost:8000/oauth/callback` (for local development)
+     - `http://localhost:8123/oauth/callback` (for local development)
      - `https://yourdomain.com/oauth/callback` (for production)
 
 4. **Get Your App Credentials**
@@ -125,7 +125,7 @@ Before setting up OAuth, ensure you have:
 2. **Create OAuth Application**
    - Fill in the application details:
      - **Application name**: Your app name (e.g., "NLWeb Local")
-     - **Homepage URL**: `http://yourdomain.com` (or `http://localhost:8000` for local development)
+     - **Homepage URL**: `http://yourdomain.com` (or `http://localhost:8123` for local development)
      - **Authorization callback URL**: `http://yourdomain.com/oauth/callback`
    - Click "Register application"
 
@@ -145,19 +145,19 @@ Before setting up OAuth, ensure you have:
    # Google OAuth
    export GOOGLE_OAUTH_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
    export GOOGLE_OAUTH_CLIENT_SECRET="your_google_client_secret"
-   
+
    # Facebook OAuth (optional)
    export FACEBOOK_OAUTH_CLIENT_ID="your_facebook_app_id"
    export FACEBOOK_OAUTH_CLIENT_SECRET="your_facebook_app_secret"
-   
+
    # Microsoft OAuth (optional)
    export MICROSOFT_OAUTH_CLIENT_ID="your_microsoft_client_id"
    export MICROSOFT_OAUTH_CLIENT_SECRET="your_microsoft_client_secret"
-   
+
    # GitHub OAuth
    export GITHUB_CLIENT_ID="your_github_client_id"
    export GITHUB_CLIENT_SECRET="your_github_client_secret"
-   
+
    # Session Secret (required)
    # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
    export OAUTH_SESSION_SECRET="your_random_session_secret"
@@ -175,17 +175,17 @@ Before setting up OAuth, ensure you have:
        enabled: true  # Set to true/false to enable/disable
        client_id_env: GOOGLE_OAUTH_CLIENT_ID
        client_secret_env: GOOGLE_OAUTH_CLIENT_SECRET
-       
+
      facebook:
        enabled: false  # Set to true to enable
        client_id_env: FACEBOOK_OAUTH_CLIENT_ID
        client_secret_env: FACEBOOK_OAUTH_CLIENT_SECRET
-       
+
      microsoft:
        enabled: false  # Set to true to enable
        client_id_env: MICROSOFT_OAUTH_CLIENT_ID
        client_secret_env: MICROSOFT_OAUTH_CLIENT_SECRET
-       
+
      github:
        enabled: true
        client_id_env: GITHUB_CLIENT_ID
@@ -210,7 +210,7 @@ Before setting up OAuth, ensure you have:
    ```
 
 2. **Access the Web Interface**
-   - Open [http://localhost:8000](http://localhost:8000) in your browser
+   - Open [http://localhost:8123](http://localhost:8123) in your browser
    - Click the "Login" button in the top-right corner
    - You should see login options for enabled providers
 
@@ -267,7 +267,7 @@ Before setting up OAuth, ensure you have:
 
 2. **Redirect URI Mismatch**
    - Verify the redirect URI in provider settings matches exactly
-   - Include both <http://localhost:8000/oauth/callback> and your production URL
+   - Include both <http://localhost:8123/oauth/callback> and your production URL
 
 3. **Invalid Client Error**
    - Double-check client ID and secret

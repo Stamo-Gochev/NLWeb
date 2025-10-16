@@ -9,8 +9,8 @@
 3. Click "New OAuth App"
 4. Fill in the application details:
    - **Application name**: NLWeb Local (or any name you prefer)
-   - **Homepage URL**: http://localhost:8000
-   - **Authorization callback URL**: http://localhost:8000/oauth/callback
+   - **Homepage URL**: http://localhost:8123
+   - **Authorization callback URL**: http://localhost:8123/oauth/callback
 5. Click "Register application"
 
 ### 2. Get Your Credentials
